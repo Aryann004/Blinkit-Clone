@@ -13,10 +13,10 @@
             <b>Delivery in 10 minutes</b>
             <span>H-15,D-Block Army-Cantt, Clement Town, Uttarakhand  &#9662;</span>
         </div>
-        <div class="search"><span>&#128269;</span><input type="text" placeholder='Search "chocolate"'></div>
+        <div class="search"><span>&#128269;</span><input type="text" id="search" placeholder='Search "chocolate"'></div>
         <div class="login">
-            <li>Login</li>
-            <li><button class="cart-btn"><img src="cart-shopping-solid.png" alt="">My Cart</button></li>
+            <li><button class="login-btn" id="login-btn">Login</button></li>
+            <li><button class="cart-btn" id="cart-btn"><img src="images/cart-shopping-solid.png" alt="">My Cart<span class="badge" id="cart-count">0</span></button></li>
         </div>
     </nav>
 
@@ -24,7 +24,7 @@
         <div class="content">
             <h1>Stock up on daily essentials</h1>
             <p>Get farm-fresh goodness and a range of exotic fruits, vegetables, eggs &amp; more</p>
-            <button class="shop-btn">Shop Now</button>
+            <button class="shop-btn" id="shop-now">Shop Now</button>
         </div>
         <div class="hero-img"><img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f95b.png" alt=""><img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f34c.png" alt=""><img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f966.png" alt=""><img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f95a.png" alt=""><img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f345.png" alt=""><img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f347.png" alt=""><img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f955.png" alt=""><img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f34a.png" alt=""></div>
     </div>
@@ -138,9 +138,137 @@
                 <p>Pet Care</p>
             </div>
     </div>
+    <section class="products" id="products">
+        <div class="section-head"><h2 id="products-title">Best sellers</h2><button class="chip" id="show-all" hidden>Show all</button></div>
+        <div class="product-grid" id="product-grid"></div>
+        <p class="empty" id="empty" hidden>No products found. Try a different search.</p>
+    </section>
+
     <footer>
+        <div class="footer-cols">
+            <div><h3>Useful links</h3><ul class="footer-links"><li>About</li><li>Careers</li><li>Blog</li><li>Press</li><li>Partner</li><li>Privacy</li><li>Terms</li><li>FAQs</li><li>Security</li></ul></div>
+            <div><h3>Categories <a class="see-all" href="#products">see all</a></h3><ul class="footer-links"><li>Dairy &amp; Eggs</li><li>Fruits</li><li>Snacks</li><li>Cold Drinks</li><li>Sweet Tooth</li><li>Tea &amp; Coffee</li><li>Atta &amp; Dal</li><li>Baby Care</li><li>Pet Care</li></ul></div>
+        </div>
         <div class="footer-bar">
+            <span>&copy; 2026 Blinkit Clone. A practice project, not affiliated with Blinkit.</span>
+            <div class="apps"><button class="store-btn">App Store</button><button class="store-btn">Google Play</button></div>
+            <div class="social"><span>f</span><span>X</span><span>in</span></div>
         </div>
     </footer>
+
+    <div class="overlay" id="overlay"></div>
+    <aside class="drawer" id="drawer" aria-label="My Cart">
+        <div class="drawer-head"><h3>My Cart</h3><button class="close" id="close-cart" aria-label="Close cart">&times;</button></div>
+        <div class="drawer-note">&#9201; Delivery in 10 minutes</div>
+        <div class="drawer-items" id="drawer-items"></div>
+        <div class="drawer-foot" id="drawer-foot"></div>
+    </aside>
+
+    <div class="modal" id="modal" hidden>
+        <div class="modal-box">
+            <button class="close" id="close-modal" aria-label="Close">&times;</button>
+            <div class="logo"><span class="blink">blink</span><span class="it">it</span></div>
+            <h3>Login or sign up</h3>
+            <input type="tel" id="phone" placeholder="Enter mobile number" maxlength="10">
+            <p class="err" id="phone-err"></p>
+            <button class="primary" id="continue">Continue</button>
+            <small>By continuing, you agree to our Terms of service &amp; Privacy policy</small>
+        </div>
+    </div>
+    <div class="toast" id="toast"></div>
+    <script>
+const E = c => `https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/${c}.png`;
+const PRODUCTS = [
+  ['Fresh Toned Milk','500 ml',27,30,'1f95b','Dairy, Bread & Eggs'],
+  ['Farm Fresh Eggs','6 pcs',54,60,'1f95a','Dairy, Bread & Eggs'],
+  ['Brown Bread','400 g',45,50,'1f35e','Dairy, Bread & Eggs'],
+  ['Bananas','6 pcs',42,52,'1f34c','Fruits & Vegetables'],
+  ['Fresh Tomato','500 g',29,35,'1f345','Fruits & Vegetables'],
+  ['Broccoli','1 pc',49,60,'1f966','Fruits & Vegetables'],
+  ['Cola Can','300 ml',40,40,'1f964','Cold Drinks & Juices'],
+  ['Orange Juice','1 L',99,120,'1f34a','Cold Drinks & Juices'],
+  ['Salted Popcorn','90 g',35,40,'1f37f','Snacks & Munchies'],
+  ['Instant Noodles','4 pack',56,64,'1f35c','Breakfast & Instant Food'],
+  ['Milk Chocolate','80 g',75,85,'1f36b','Sweet Tooth'],
+  ['Choco Cookies','150 g',30,35,'1f36a','Bakery & Biscuits'],
+  ['Masala Tea','250 g',110,130,'2615','Tea, Coffee & Milk Drinks'],
+  ['Basmati Rice','1 kg',98,115,'1f33e','Atta, Rice & Dal'],
+  ['Iodised Salt','1 kg',28,30,'1f9c2','Masala, Oil & More'],
+  ['Honey','250 g',135,160,'1f36f','Sauces & Spreads']
+].map((p,i)=>({id:i,name:p[0],wt:p[1],price:p[2],mrp:p[3],img:E(p[4]),cat:p[5]}));
+
+const $ = id => document.getElementById(id);
+const cart = {}; let filter = '', query = '';
+const money = n => '₹' + n;
+const toast = m => { const t=$('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2000); };
+
+function buyControl(p){
+  const q = cart[p.id] || 0;
+  return q ? `<div class="qty"><button data-act="dec" data-id="${p.id}" aria-label="Remove one">&minus;</button><span>${q}</span><button data-act="inc" data-id="${p.id}" aria-label="Add one">+</button></div>`
+           : `<button class="add" data-act="inc" data-id="${p.id}">ADD</button>`;
+}
+function renderProducts(){
+  const list = PRODUCTS.filter(p => (!filter || p.cat===filter) && p.name.toLowerCase().includes(query));
+  $('product-grid').innerHTML = list.map(p => {
+    const off = p.mrp>p.price ? Math.round((p.mrp-p.price)/p.mrp*100) : 0;
+    return `<div class="product">${off?`<span class="off">${off}% OFF</span>`:''}
+      <div class="pic"><img src="${p.img}" alt="${p.name}"></div><span class="time">&#9201; 10 mins</span>
+      <h4>${p.name}</h4><div class="wt">${p.wt}</div>
+      <div class="buy"><div class="price"><b>${money(p.price)}</b>${off?`<s>${money(p.mrp)}</s>`:''}</div>${buyControl(p)}</div></div>`;
+  }).join('');
+  $('empty').hidden = list.length>0;
+  $('products-title').textContent = filter || (query ? 'Search results' : 'Best sellers');
+  $('show-all').hidden = !filter;
+}
+function renderCart(){
+  const items = PRODUCTS.filter(p => cart[p.id]);
+  const count = items.reduce((s,p)=>s+cart[p.id],0);
+  const sub = items.reduce((s,p)=>s+cart[p.id]*p.price,0);
+  const fee = sub && sub<199 ? 25 : 0, total = sub+fee+(sub?3:0);
+  $('cart-count').textContent = count;
+  $('drawer-items').innerHTML = items.length ? items.map(p=>`<div class="row"><img src="${p.img}" alt=""><div class="info">${p.name}<small>${p.wt}</small><b>${money(p.price*cart[p.id])}</b></div>
+      <div class="qty"><button data-act="dec" data-id="${p.id}" aria-label="Remove one">&minus;</button><span>${cart[p.id]}</span><button data-act="inc" data-id="${p.id}" aria-label="Add one">+</button></div></div>`).join('')
+    : `<div class="cart-empty"><img src="${E('1f6d2')}" alt="">Your cart is empty.<br>Add something tasty to get started.</div>`;
+  $('drawer-foot').innerHTML = sub ? `<div class="bill"><span>Items total</span><span>${money(sub)}</span></div>
+    <div class="bill"><span>Delivery fee</span><span>${fee?money(fee):'FREE'}</span></div>
+    <div class="bill"><span>Handling fee</span><span>${money(3)}</span></div>
+    ${fee?`<div class="bill"><span>Add ${money(199-sub)} more for free delivery</span></div>`:''}
+    <div class="bill total"><span>Grand total</span><span>${money(total)}</span></div>
+    <button class="primary" id="checkout">Proceed to pay</button>` : '';
+}
+function update(){ renderProducts(); renderCart(); }
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]');
+  if (b){ const id=+b.dataset.id; cart[id]=(cart[id]||0)+(b.dataset.act==='inc'?1:-1); if(cart[id]<=0) delete cart[id]; update(); return; }
+  if (e.target.id==='checkout'){ for(const k in cart) delete cart[k]; update(); toggleCart(false); toast('Order placed! Arriving in 10 minutes.'); }
+});
+function toggleCart(open){ $('drawer').classList.toggle('open',open); $('overlay').classList.toggle('show',open); }
+$('cart-btn').onclick = () => toggleCart(true);
+$('close-cart').onclick = $('overlay').onclick = () => toggleCart(false);
+
+$('search').addEventListener('input', e => { query = e.target.value.trim().toLowerCase(); filter=''; renderProducts(); if(query) $('products').scrollIntoView(); });
+$('show-all').onclick = () => { filter=''; renderProducts(); };
+$('shop-now').onclick = () => $('products').scrollIntoView();
+document.querySelectorAll('.category').forEach(c => c.addEventListener('click', () => {
+  const name = c.querySelector('p').textContent.trim();
+  if (PRODUCTS.some(p=>p.cat===name)){ filter=name; query=''; $('search').value=''; renderProducts(); $('products').scrollIntoView(); }
+  else toast(name + ' is coming soon');
+}));
+document.querySelectorAll('.order-btn').forEach(b => b.onclick = () => toast('This section is coming soon'));
+
+const modal = $('modal');
+$('login-btn').onclick = () => { modal.hidden=false; $('phone').focus(); };
+$('close-modal').onclick = () => modal.hidden=true;
+modal.addEventListener('click', e => { if(e.target===modal) modal.hidden=true; });
+$('continue').onclick = () => {
+  const v = $('phone').value.trim();
+  if(!/^[6-9]\d{9}$/.test(v)){ $('phone-err').textContent='Enter a valid 10-digit mobile number.'; return; }
+  $('phone-err').textContent=''; modal.hidden=true; $('login-btn').textContent='+91 '+v.slice(0,2)+'xxxxxx'+v.slice(-2); toast('Logged in (demo only)');
+};
+document.addEventListener('keydown', e => { if(e.key==='Escape'){ modal.hidden=true; toggleCart(false); } });
+update();
+
+    </script>
 </body>
 </html>
